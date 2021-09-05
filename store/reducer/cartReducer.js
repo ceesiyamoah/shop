@@ -1,5 +1,5 @@
 import CartItem from "../../models/cart-item";
-import { ADD_TO_CART } from "../../types/types";
+import { ADD_TO_CART, DELETE_ALL_ITEMS } from "../../types/types";
 
 const initialState = {
   items: {},
@@ -29,6 +29,13 @@ export default (state = initialState, { type, payload }) => {
           [id]: cartItemToAdd,
         },
         totalAmount: state.totalAmount + price,
+      };
+
+    case DELETE_ALL_ITEMS:
+      return {
+        ...state,
+        totalAmount: 0,
+        items: {},
       };
 
     default:
