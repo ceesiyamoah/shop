@@ -6,10 +6,12 @@ import ShopNavigator from "./navigation/ShopNavigator";
 import cartReducer from "./store/reducer/cartReducer";
 import productReducer from "./store/reducer/productReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
+import ordersReducer from "./store/reducer/ordersReducer";
 
 const rootReducer = combineReducers({
   products: productReducer,
   cart: cartReducer,
+  orders: ordersReducer,
 });
 
 //! Remove composeWithDevTools before deployment

@@ -24,7 +24,7 @@ const ProductDetailScreen = ({
           color={colors.primary}
           title='Add to cart'
           onPress={() => {
-            addToCart(item);
+            addToCart({ price, title, id });
           }}
         />
       </View>

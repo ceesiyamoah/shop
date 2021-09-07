@@ -1,13 +1,21 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
-import { FlatList } from "react-native-web";
+import { View, StyleSheet, Text, Button, Alert, FlatList } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
+import CartItem from "../../components/shop/CartItem";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import colors from "../../constants/colors";
-import { deleteAllItems } from "../../store/action/cartActions";
+import { deleteAllItems, deleteItem } from "../../store/action/cartActions";
+import { addOrder } from "../../store/action/ordersActions";
 
-const CartScreen = ({ total, items, deleteAllItems, navigation }) => {
+const CartScreen = ({
+  total,
+  items,
+  deleteAllItems,
+  navigation,
+  deleteItem,
+  addOrder,
+}) => {
   useEffect(() => {
     navigation.setParams({
       deleteAllItems,
@@ -29,13 +37,24 @@ const CartScreen = ({ total, items, deleteAllItems, navigation }) => {
             title='Order Now'
             color={colors.secondary}
             disabled={!items.length}
+            onPress={() => {
+              addOrder(items, total);
+            }}
           />
         }
       </View>
-      {/* <FlatList /> */}
-      <View>
-        <Text>For flat</Text>
-      </View>
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.productId}
+        renderItem={({ item }) => (
+          <CartItem
+            {...item}
+            onRemove={() => {
+              deleteItem(item.productId);
+            }}
+          />
+        )}
+      />
     </View>
   );
 };
@@ -64,6 +83,7 @@ const styles = StyleSheet.create({
 
 CartScreen.navigationOptions = ({ navigation }) => {
   return {
+    headerTitle: "Your Cart",
     headerRight: () =>
       navigation.getParam("display") && (
         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
@@ -71,7 +91,25 @@ CartScreen.navigationOptions = ({ navigation }) => {
             title='Delete'
             iconName='trash'
             onPress={() => {
-              navigation.getParam("deleteAllItems")();
+              // navigation.getParam("deleteAllItems")();
+              Alert.alert(
+                "Delete All ",
+                "Are you sure you want to delete all items?",
+                [
+                  {
+                    text: "Yes",
+                    onPress: () => {
+                      navigation.getParam("deleteAllItems")();
+                    },
+                  },
+                  {
+                    text: "Cancel",
+                  },
+                ],
+                {
+                  cancelable: true,
+                }
+              );
             }}
           />
         </HeaderButtons>
@@ -91,14 +129,18 @@ const mapStateToProps = (state) => {
     });
   }
 
+  trans.sort((a, b) => b.price - a.price);
+
   return {
-    total: state.cart.totalAmount.toFixed(2),
+    total: Math.abs(state.cart.totalAmount).toFixed(2),
     items: trans,
   };
 };
 
 const mapDispatchToProps = {
   deleteAllItems,
+  deleteItem,
+  addOrder,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartScreen);
