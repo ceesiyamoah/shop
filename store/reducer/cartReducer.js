@@ -5,6 +5,7 @@ import {
   ADD_TO_CART,
   DELETE_ALL_ITEMS,
   DELETE_ITEM_FROM_CART,
+  DELETE_PRODUCT,
 } from "../../types/types";
 
 const initialState = {
@@ -61,6 +62,18 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         items: updatedItems,
         totalAmount: state.totalAmount - selectedId.price,
+      };
+
+    case DELETE_PRODUCT:
+      if (!state.items[payload]) return state;
+      const newItems = { ...state.items };
+      const itemTotal = state.items[payload].sum;
+
+      delete newItems[payload];
+      return {
+        ...state,
+        items: newItems,
+        totalAmount: state.totalAmount - itemTotal,
       };
 
     default:

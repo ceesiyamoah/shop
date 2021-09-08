@@ -8,25 +8,14 @@ import {
   TouchableNativeFeedback,
 } from "react-native";
 import colors from "../../constants/colors";
-const ProductItem = ({ title, imageUrl, price, onViewDetail, onAddToCart }) => {
+const ProductItem = ({ title, imageUrl, price, children, onSelect }) => {
   return (
-    <TouchableNativeFeedback onPress={onViewDetail} useForeground>
+    <TouchableNativeFeedback onPress={onSelect} useForeground>
       <View style={styles.product}>
         <Image style={styles.image} source={{ uri: imageUrl }} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>$ {price.toFixed(2)}</Text>
-        <View style={styles.buttonHolder}>
-          <Button
-            title='View Details'
-            onPress={onViewDetail}
-            color={colors.primary}
-          />
-          <Button
-            title='To cart'
-            onPress={onAddToCart}
-            color={colors.primary}
-          />
-        </View>
+        <View style={styles.buttonHolder}>{children}</View>
       </View>
     </TouchableNativeFeedback>
   );
