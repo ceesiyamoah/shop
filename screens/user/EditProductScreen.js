@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Text, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  TextInput,
+  ToastAndroid,
+} from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
@@ -21,12 +28,17 @@ const EditProductScreen = ({
 
   const submitHandler = useCallback(() => {
     if (product) {
-      const { id, title, description, imageUrl } = product;
-      updateProduct(id, title, description, imageUrl);
+      console.log({ id: product.id, title, description, imageUrl });
+      updateProduct({ id: product.id, title, description, imageUrl });
     } else {
       createProduct({ title, description, imageUrl, price });
     }
-  }, []);
+    navigation.navigate("UserProducts");
+    ToastAndroid.show(
+      `Item ${product ? "Edited" : "Created"}`,
+      ToastAndroid.SHORT
+    );
+  }, [title, description, imageUrl, price]);
 
   useEffect(() => {
     navigation.setParams({

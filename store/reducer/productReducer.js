@@ -43,6 +43,7 @@ export default (state = initialState, { type, payload }) => {
       };
 
     case UPDATE_PRODUCT:
+      // console.log(payload);
       const toUpdateIndex = state.userProducts.findIndex(
         (item) => item.id === payload.id
       );
@@ -57,9 +58,12 @@ export default (state = initialState, { type, payload }) => {
 
       const updatedUserProducts = [...state.userProducts];
       updatedUserProducts[toUpdateIndex] = updatedProduct;
-      const availIndex = state.userProducts.findIndex((item) => item.id === id);
+      const availIndex = state.userProducts.findIndex(
+        (item) => item.id === payload.id
+      );
       const updatedAvailProducts = [...state.availableProducts];
       updatedAvailProducts[availIndex] = updatedProduct;
+      console.log(updatedAvailProducts);
       return {
         ...state,
         availableProducts: updatedAvailProducts,

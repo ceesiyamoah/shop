@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Button, FlatList } from "react-native";
+import { View, StyleSheet, Button, FlatList, Alert } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -33,7 +33,14 @@ const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
           <Button
             title='Delete'
             onPress={() => {
-              deleteProduct(item.id);
+              Alert.alert(
+                "Delete Product",
+                "Are you sure you want to delete this product?",
+                [
+                  { text: "Cancel" },
+                  { text: "Yes", onPress: () => deleteProduct(item.id) },
+                ]
+              );
             }}
             color={colors.primary}
           />

@@ -9,7 +9,7 @@ const CartItem = ({ onRemove, sum, title, quantity, deletable = true }) => {
         <Text style={styles.mainText}>{title}</Text>
       </View>
       <View style={styles.itemData}>
-        <Text style={styles.mainText}>{sum.toFixed(2)}</Text>
+        <Text style={styles.mainText}>{Number(sum).toFixed(2)}</Text>
         {deletable && (
           <TouchableOpacity onPress={onRemove} style={styles.delete}>
             <Ionicons name='close-circle-outline' size={23} color='red' />

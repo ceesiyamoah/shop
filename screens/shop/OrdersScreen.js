@@ -5,6 +5,13 @@ import { connect } from "react-redux";
 import OrderItem from "../../components/shop/OrderItem";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 const OrdersScreen = ({ orders }) => {
+  if (!orders.length) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.text}>No Orders yet</Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       data={orders}
@@ -35,7 +42,15 @@ OrdersScreen.navigationOptions = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  screen: {},
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 18,
+    color: "#ccc",
+  },
 });
 
 const mapStateToProps = (state) => ({

@@ -14,7 +14,7 @@ const ProductItem = ({ title, imageUrl, price, children, onSelect }) => {
       <View style={styles.product}>
         <Image style={styles.image} source={{ uri: imageUrl }} />
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.price}>$ {price.toFixed(2)}</Text>
+        <Text style={styles.price}>$ {Number(price).toFixed(2)}</Text>
         <View style={styles.buttonHolder}>{children}</View>
       </View>
     </TouchableNativeFeedback>
