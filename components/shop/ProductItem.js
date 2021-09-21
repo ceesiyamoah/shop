@@ -8,28 +8,23 @@ import {
   TouchableNativeFeedback,
 } from "react-native";
 import colors from "../../constants/colors";
+import Card from "../UI/Card";
 const ProductItem = ({ title, imageUrl, price, children, onSelect }) => {
   return (
     <TouchableNativeFeedback onPress={onSelect} useForeground>
-      <View style={styles.product}>
+      <Card style={styles.product}>
         <Image style={styles.image} source={{ uri: imageUrl }} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>$ {Number(price).toFixed(2)}</Text>
         <View style={styles.buttonHolder}>{children}</View>
-      </View>
+      </Card>
     </TouchableNativeFeedback>
   );
 };
 const styles = StyleSheet.create({
   product: {
-    borderRadius: 10,
-    elevation: 5,
-    backgroundColor: "white",
     height: 300,
     margin: 20,
-    flex: 1,
-    alignItems: "center",
-    overflow: "hidden",
   },
   image: {
     height: "60%",

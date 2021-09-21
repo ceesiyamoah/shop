@@ -37,8 +37,12 @@ const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
                 "Delete Product",
                 "Are you sure you want to delete this product?",
                 [
-                  { text: "Cancel" },
-                  { text: "Yes", onPress: () => deleteProduct(item.id) },
+                  { text: "No", style: "default" },
+                  {
+                    text: "Yes",
+                    onPress: () => deleteProduct(item.id),
+                    style: "destructive",
+                  },
                 ]
               );
             }}

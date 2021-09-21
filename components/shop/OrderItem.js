@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import colors from "../../constants/colors";
+import Card from "../UI/Card";
 import CartItem from "./CartItem";
 
 const OrderItem = ({ totalAmount, items, date }) => {
   const [showDetails, setShowDetails] = useState(false);
   return (
-    <View style={styles.orderItem}>
+    <Card style={styles.orderItem}>
       <View style={styles.summary}>
         <Text style={styles.total}>$ {Number(totalAmount).toFixed(2)}</Text>
         <Text style={styles.date}>{date}</Text>
@@ -21,11 +22,11 @@ const OrderItem = ({ totalAmount, items, date }) => {
       {showDetails && (
         <View style={styles.detailItem}>
           {items.map((el) => (
-            <CartItem key={el.id} {...el} deletable={false} />
+            <CartItem key={el.productId} {...el} deletable={false} />
           ))}
         </View>
       )}
-    </View>
+    </Card>
   );
 };
 const styles = StyleSheet.create({

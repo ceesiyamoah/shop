@@ -3,16 +3,23 @@ import Product from "../../models/product";
 import {
   CREATE_PRODUCT,
   DELETE_PRODUCT,
+  GET_PRODUCTS,
   UPDATE_PRODUCT,
 } from "../../types/types";
 
 const initialState = {
-  availableProducts: [...PRODUCTS],
+  availableProducts: [],
   userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"),
 };
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
+    case GET_PRODUCTS:
+      return {
+        availableProducts: [...payload],
+        userProducts: [...payload.filter((item) => item.ownerId === "u1")],
+      };
+
     case DELETE_PRODUCT:
       return {
         ...state,
@@ -27,9 +34,9 @@ export default (state = initialState, { type, payload }) => {
       };
 
     case CREATE_PRODUCT:
-      const { title, description, imageUrl, price } = payload;
+      const { id, title, description, imageUrl, price } = payload;
       const newProd = new Product(
-        new Date().toJSON(),
+        id,
         "u1",
         title,
         imageUrl,
@@ -43,7 +50,6 @@ export default (state = initialState, { type, payload }) => {
       };
 
     case UPDATE_PRODUCT:
-      // console.log(payload);
       const toUpdateIndex = state.userProducts.findIndex(
         (item) => item.id === payload.id
       );
@@ -63,7 +69,6 @@ export default (state = initialState, { type, payload }) => {
       );
       const updatedAvailProducts = [...state.availableProducts];
       updatedAvailProducts[availIndex] = updatedProduct;
-      console.log(updatedAvailProducts);
       return {
         ...state,
         availableProducts: updatedAvailProducts,
