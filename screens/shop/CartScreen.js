@@ -1,5 +1,13 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Text, Button, Alert, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  Alert,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
 import CartItem from "../../components/shop/CartItem";
@@ -16,6 +24,8 @@ const CartScreen = ({
   deleteItem,
   addOrder,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   useEffect(() => {
     navigation.setParams({
       deleteAllItems,
@@ -26,6 +36,14 @@ const CartScreen = ({
       display: items.length > 0,
     });
   }, [items]);
+
+  if (isLoading) {
+    return (
+      <View>
+        <ActivityIndicator size='large' color={colors.primary} />
+      </View>
+    );
+  }
   return (
     <View style={styles.screen}>
       <View style={styles.summary}>
@@ -38,7 +56,14 @@ const CartScreen = ({
             color={colors.secondary}
             disabled={!items.length}
             onPress={() => {
-              addOrder(items, total);
+              addOrder(items, total)
+                .then((res) => {
+                  setIsLoading(false);
+                })
+                .catch((err) => {
+                  setIsLoading(false);
+                  setError(err.message);
+                });
             }}
           />
         }
@@ -78,6 +103,11 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: colors.primary,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

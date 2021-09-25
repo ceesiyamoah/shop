@@ -8,13 +8,10 @@ const initialState = {
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case ADD_ORDER:
-      const { items, amount } = payload;
+      const { items, amount, id, date } = payload;
       return {
         ...state,
-        orders: [
-          ...state.orders,
-          new Order(new Date().toString(), items, amount, new Date()),
-        ],
+        orders: [...state.orders, new Order(id, items, amount, date)],
       };
 
     default:

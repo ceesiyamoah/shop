@@ -6,10 +6,23 @@ import {
   UPDATE_PRODUCT,
 } from "../../types/types";
 
-export const deleteProduct = (id) => ({
-  type: DELETE_PRODUCT,
-  payload: id,
-});
+export const deleteProduct = (id) => async (dispatch) => {
+  await fetch(
+    `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Could not delete product");
+  }
+
+  dispatch({
+    type: DELETE_PRODUCT,
+    payload: id,
+  });
+};
 
 export const getProducts = () => async (dispatch) => {
   try {
@@ -30,7 +43,7 @@ export const getProducts = () => async (dispatch) => {
 
     dispatch({ type: GET_PRODUCTS, payload: loadedData });
   } catch (error) {
-    throw error;
+    throw new Error(error.message);
   }
 };
 
@@ -48,13 +61,36 @@ export const createProduct =
       }
     );
 
+    if (!response.ok) {
+      throw new Error("Could not create product");
+    }
+
     const { name } = await response.json();
     dispatch({
       type: CREATE_PRODUCT,
       payload: { id: name, title, description, imageUrl, price },
     });
   };
-export const updateProduct = ({ id, title, description, imageUrl }) => ({
-  type: UPDATE_PRODUCT,
-  payload: { id, title, description, imageUrl },
-});
+export const updateProduct =
+  ({ id, title, description, imageUrl }) =>
+  async (dispatch) => {
+    const response = await fetch(
+      `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, description, imageUrl }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not update product");
+    }
+
+    dispatch({
+      type: UPDATE_PRODUCT,
+      payload: { id, title, description, imageUrl },
+    });
+  };

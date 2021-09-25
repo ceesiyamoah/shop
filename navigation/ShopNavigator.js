@@ -82,7 +82,7 @@ const ShopNavigator = createDrawerNavigator(
   {
     Products: ProductsNavigator,
     Orders: OrdersNavigator,
-    UserProduct: UserProductsNavigator,
+    "User Products": UserProductsNavigator,
   },
   {
     contentOptions: {

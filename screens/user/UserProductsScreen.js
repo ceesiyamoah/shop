@@ -1,5 +1,12 @@
-import React from "react";
-import { View, StyleSheet, Button, FlatList, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Button,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -8,11 +15,25 @@ import colors from "../../constants/colors";
 import { deleteProduct } from "../../store/action/productActions";
 
 const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const onHandleEdit = (id) => {
     navigation.navigate("EditProduct", {
       id,
     });
   };
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Error", "An error occurred", [
+        { text: "Okay", style: "destructive" },
+      ]);
+    }
+  }, [error]);
+
+  if (isLoading)
+    return <ActivityIndicator size='large' color={colors.primary} />;
+
   return (
     <FlatList
       data={userProducts}
@@ -40,7 +61,19 @@ const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
                   { text: "No", style: "default" },
                   {
                     text: "Yes",
-                    onPress: () => deleteProduct(item.id),
+                    onPress: () => {
+                      setIsLoading(true);
+                      setError(false);
+                      deleteProduct(item.id)
+                        .then((res) => {
+                          setIsLoading(false);
+                          setError(false);
+                        })
+                        .catch((err) => {
+                          setError(err.message);
+                          setIsLoading(false);
+                        });
+                    },
                     style: "destructive",
                   },
                 ]

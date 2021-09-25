@@ -8,12 +8,14 @@ import {
   ToastAndroid,
   Text,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
 import ErrorText from "../../components/UI/ErrorText";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import Input from "../../components/UI/Input";
+import colors from "../../constants/colors";
 import {
   createProduct,
   updateProduct,
@@ -68,6 +70,8 @@ const EditProductScreen = ({
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState("");
   const [formState, dispatch] = useReducer(formReducer, initialState);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState();
 
   const submitHandler = useCallback(() => {
     if (!title || !description || !imageUrl || (!!!product && !price)) {
@@ -76,22 +80,39 @@ const EditProductScreen = ({
       ]);
       return;
     }
+    setIsError(null);
+    setIsLoading(true);
     if (product) {
       updateProduct({
         id: product.id,
         title,
         description,
         imageUrl,
-      });
+      })
+        .then((res) => {
+          setIsLoading(false);
+          navigation.goBack();
+        })
+        .catch((err) => {
+          setIsError(err.message);
+          setIsLoading(false);
+        });
     } else {
       createProduct({
         title,
         description,
         imageUrl,
         price: +price,
-      });
+      })
+        .then((res) => {
+          setIsLoading(false);
+          navigation.goBack();
+        })
+        .catch((err) => {
+          setIsError(err.message);
+          setIsLoading(false);
+        });
     }
-    navigation.goBack();
     ToastAndroid.show(
       `Item ${product ? "Edited" : "Created"}`,
       ToastAndroid.SHORT
@@ -104,6 +125,14 @@ const EditProductScreen = ({
     });
   }, [submitHandler]);
 
+  useEffect(() => {
+    if (isError) {
+      Alert.alert("Error", "An error occurred", [
+        { text: "Okay", style: "destructive" },
+      ]);
+    }
+  }, [isError]);
+
   const textChangedHandler = useCallback((inputIdentifier, value, isValid) => {
     dispatch({
       type: FORM_INPUT_UPDATE,
@@ -112,6 +141,13 @@ const EditProductScreen = ({
       isValid,
     });
   });
+
+  if (isLoading)
+    return (
+      <View style={styles.screen}>
+        <ActivityIndicator size='large' color={colors.primary} />
+      </View>
+    );
 
   return (
     <KeyboardAvoidingView
@@ -127,26 +163,6 @@ const EditProductScreen = ({
             value={title}
             onChangeText={(text) => setTitle(text)}
           />
-          {/* <Input
-            header='Title'
-            isValid={formState.inputValidities.title}
-            onInputChange={textChangedHandler}
-            value={formState.inputValues.title}
-            autoCapitalize='words'
-            returnKeyType='next'
-            initialValue={product?.title || ""}
-            initialValidity={!!product}
-            id='title'
-          /> */}
-          {/* <Input
-            header='Image Url'
-            isValid={formState.inputValidities.imageUrl}
-            onInputChange={textChangedHandler}
-            value={formState.inputValues.imageUrl}
-            initialValue={product?.imageUrl || ""}
-            initialValidity={!!product}
-            id='imageUrl'
-          /> */}
           <Text style={styles.label}>ImageUrl</Text>
 
           <TextInput
@@ -156,16 +172,6 @@ const EditProductScreen = ({
           />
 
           {!product && (
-            // <Input
-            //   header='Price'
-            //   isValid={formState.inputValidities.price}
-            //   onInputChange={textChangedHandler}
-            //   value={formState.inputValues.price}
-            //   keyboardType='decimal-pad'
-            //   initialValue={product?.price || ""}
-            //   initialValidity={!!product}
-            //   id='price'
-            // />
             <View>
               <Text style={styles.label}>Price</Text>
 
@@ -177,17 +183,7 @@ const EditProductScreen = ({
               />
             </View>
           )}
-          {/* <Input
-            header='Description'
-            isValid={formState.inputValidities.description}
-            id='description'
-            onInputChange={textChangedHandler}
-            value={formState.inputValues.description}
-            multiline
-            numberOfLines={3}
-            initialValue={product?.description || ""}
-            initialValidity={!!product}
-          /> */}
+
           <Text style={styles.label}>Description</Text>
           <TextInput
             style={styles.input}
@@ -230,6 +226,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
+  },
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
