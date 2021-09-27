@@ -37,36 +37,33 @@ const CartScreen = ({
     });
   }, [items]);
 
-  if (isLoading) {
-    return (
-      <View>
-        <ActivityIndicator size='large' color={colors.primary} />
-      </View>
-    );
-  }
+  const sendOrderHandler = () => {
+    setIsLoading(true);
+    addOrder(items, total)
+      .then((res) => {
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setError(err.message);
+      });
+  };
   return (
     <View style={styles.screen}>
       <View style={styles.summary}>
         <Text style={styles.summaryText}>
           Total: <Text style={styles.amount}>${total}</Text>
         </Text>
-        {
+        {!isLoading ? (
           <Button
             title='Order Now'
             color={colors.secondary}
             disabled={!items.length}
-            onPress={() => {
-              addOrder(items, total)
-                .then((res) => {
-                  setIsLoading(false);
-                })
-                .catch((err) => {
-                  setIsLoading(false);
-                  setError(err.message);
-                });
-            }}
+            onPress={sendOrderHandler}
           />
-        }
+        ) : (
+          <ActivityIndicator size='small' color={colors.primary} />
+        )}
       </View>
       <FlatList
         data={items}
@@ -84,6 +81,11 @@ const CartScreen = ({
   );
 };
 const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   screen: {
     margin: 20,
   },
