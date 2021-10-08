@@ -6,6 +6,7 @@ import {
   FlatList,
   Alert,
   ActivityIndicator,
+  Text,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
@@ -25,14 +26,20 @@ const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert("Error", "An error occurred", [
-        { text: "Okay", style: "destructive" },
-      ]);
+      Alert.alert("Error", error, [{ text: "Okay", style: "destructive" }]);
     }
   }, [error]);
 
   if (isLoading)
     return <ActivityIndicator size='large' color={colors.primary} />;
+
+  if (!userProducts.length) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.text}>No Products yet</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -87,7 +94,17 @@ const UserProductsScreen = ({ userProducts, deleteProduct, navigation }) => {
     />
   );
 };
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 18,
+    color: "#ccc",
+  },
+});
 
 UserProductsScreen.navigationOptions = ({ navigation }) => {
   return {

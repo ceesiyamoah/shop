@@ -9,15 +9,15 @@ import {
 
 const initialState = {
   availableProducts: [],
-  userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"),
+  userProducts: [],
 };
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case GET_PRODUCTS:
       return {
-        availableProducts: [...payload],
-        userProducts: [...payload.filter((item) => item.ownerId === "u1")],
+        availableProducts: [...payload.loadedData],
+        userProducts: [...payload.userProducts],
       };
 
     case DELETE_PRODUCT:
@@ -34,10 +34,10 @@ export default (state = initialState, { type, payload }) => {
       };
 
     case CREATE_PRODUCT:
-      const { id, title, description, imageUrl, price } = payload;
+      const { id, title, description, imageUrl, price, ownerId } = payload;
       const newProd = new Product(
         id,
-        "u1",
+        ownerId,
         title,
         imageUrl,
         description,

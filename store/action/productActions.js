@@ -6,9 +6,11 @@ import {
   UPDATE_PRODUCT,
 } from "../../types/types";
 
-export const deleteProduct = (id) => async (dispatch) => {
-  await fetch(
-    `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json`,
+export const deleteProduct = (id) => async (dispatch, getState) => {
+  const response = await fetch(
+    `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json?auth=${
+      getState().auth.token
+    }`,
     {
       method: "DELETE",
     }
@@ -24,7 +26,7 @@ export const deleteProduct = (id) => async (dispatch) => {
   });
 };
 
-export const getProducts = () => async (dispatch) => {
+export const getProducts = () => async (dispatch, getState) => {
   try {
     const response = await fetch(
       "https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products.json"
@@ -37,11 +39,18 @@ export const getProducts = () => async (dispatch) => {
     const resData = await response.json();
 
     const loadedData = Object.keys(resData).map((item) => {
-      const { title, description, imageUrl, price } = resData[item];
-      return new Product(item, "u1", title, imageUrl, description, price);
+      const { title, description, imageUrl, price, ownerId } = resData[item];
+      return new Product(item, ownerId, title, imageUrl, description, price);
     });
-
-    dispatch({ type: GET_PRODUCTS, payload: loadedData });
+    dispatch({
+      type: GET_PRODUCTS,
+      payload: {
+        loadedData,
+        userProducts: loadedData.filter(
+          (item) => item.ownerId === getState().auth.userId
+        ),
+      },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -49,15 +58,23 @@ export const getProducts = () => async (dispatch) => {
 
 export const createProduct =
   ({ title, description, imageUrl, price }) =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     const response = await fetch(
-      "https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products.json",
+      `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=${
+        getState().auth.token
+      }`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, description, imageUrl, price }),
+        body: JSON.stringify({
+          title,
+          description,
+          imageUrl,
+          price,
+          ownerId: getState().auth.userId,
+        }),
       }
     );
 
@@ -68,14 +85,23 @@ export const createProduct =
     const { name } = await response.json();
     dispatch({
       type: CREATE_PRODUCT,
-      payload: { id: name, title, description, imageUrl, price },
+      payload: {
+        id: name,
+        title,
+        description,
+        imageUrl,
+        price,
+        ownerId: getState().auth.userId,
+      },
     });
   };
 export const updateProduct =
   ({ id, title, description, imageUrl }) =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     const response = await fetch(
-      `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json`,
+      `https://native-guide-default-rtdb.europe-west1.firebasedatabase.app/products/${id}.json?auth=${
+        getState().auth.token
+      }`,
       {
         method: "PATCH",
         headers: {

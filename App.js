@@ -8,11 +8,13 @@ import productReducer from "./store/reducer/productReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
 import ordersReducer from "./store/reducer/ordersReducer";
 import reduxThunk from "redux-thunk";
+import authReducer from "./store/reducer/authReducer";
 
 const rootReducer = combineReducers({
   products: productReducer,
   cart: cartReducer,
   orders: ordersReducer,
+  auth: authReducer,
 });
 
 //! Remove composeWithDevTools before deployment

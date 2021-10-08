@@ -8,6 +8,8 @@ import {
   Text,
   RefreshControl,
   ScrollView,
+  TouchableOpacity,
+  AsyncStorage,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { connect } from "react-redux";
@@ -71,12 +73,6 @@ const ProductsOverviewScreen = ({
           Sorry, An error occurred. Pull down to try again
         </Text>
       </ScrollView>
-      // <View style={styles.screen}>
-      //   <RefreshControl onRefresh={getData} refreshing={refresh} />
-      //   <Text style={styles.text}>
-      //     Sorry, An error occurred. Pull down to try again
-      //   </Text>
-      // </View>
     );
 
   if (isLoading)
