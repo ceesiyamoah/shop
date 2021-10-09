@@ -24,11 +24,13 @@ const StartupScreen = ({ navigation, authenticate }) => {
           navigation.navigate("Auth");
           return;
         }
-        navigation.navigate("Auth");
-        authenticate(token, userId);
+        const expirationTime = expiryDate.getTime() - new Date().getTime();
+
+        navigation.navigate("Shop");
+        authenticate(token, userId, expirationTime);
       })
       .catch((err) => {
-        navigation.navigate("Shop");
+        navigation.navigate("Auth");
       });
   }, []);
   return (

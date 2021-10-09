@@ -1,8 +1,7 @@
 import React from "react";
-import { Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
-import ShopNavigator from "./navigation/ShopNavigator";
+import NavigationContainer from "./navigation/NavigationContainer";
 import cartReducer from "./store/reducer/cartReducer";
 import productReducer from "./store/reducer/productReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -27,7 +26,7 @@ const store = createStore(
 export default function App() {
   return (
     <Provider store={store}>
-      <ShopNavigator />
+      <NavigationContainer />
     </Provider>
   );
 }
